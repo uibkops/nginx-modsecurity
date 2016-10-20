@@ -157,4 +157,11 @@ EXPOSE 80 22
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /opt/nginx/*
 
+#make audit concurrent
+RUN mkdir -p /opt/modsecurity/var/audit/
+RUN chown -R www-data:www-data /opt/modsecurity/var/audit/
+RUN sed -i "s/SecAuditLogType Serial/SecAuditLogType Concurrent/" /etc/nginx/modsecurity.conf
+RUN sed -i "s/SecAuditLog\(\s.*\)/# SecAuditLog\1/" /etc/nginx/modsecurity.conf
+RUN sed -i "/# SecAuditLog\s.*/a SecAuditLogStorageDir \/opt\/modsecurity\/var\/audit/" /etc/nginx/modsecurity.conf
+
 

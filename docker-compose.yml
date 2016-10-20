@@ -6,3 +6,4 @@ proxy:
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./sites-enabled:/etc/nginx/sites-enabled
+    - ./logs/modsecurity:/opt/modsecurity/var/audit/
