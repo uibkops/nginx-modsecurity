@@ -28,6 +28,9 @@ server {
   chunked_transfer_encoding on;
 
   location / {
+    #Enable ModSecurity
+    ModSecurityEnabled on;
+    ModSecurityConfig modsecurity.conf;
 
     proxy_pass                          http://guacamole/guacamole/;
     proxy_redirect                      default;
