@@ -6,4 +6,5 @@ proxy:
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./sites-enabled:/etc/nginx/sites-enabled
+    #audit logs will be saved under the following volume
     - ./logs/modsecurity:/opt/modsecurity/var/audit/
