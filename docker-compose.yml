@@ -1,0 +1,8 @@
+proxy:
+  image: nginx-modsecurity:latest
+  #image: universityinnsbruck/nginx-modsecurity:latest
+  container_name: nginx-modsecurity
+  restart: always
+  volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - ./sites-enabled:/etc/nginx/sites-enabled

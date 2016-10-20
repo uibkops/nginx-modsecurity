@@ -1,0 +1,62 @@
+upstream guacamole {
+  server guacamole:8080;
+}
+
+server {
+    listen 80;
+    return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  server_name zid-gpl-dev.uibk.ac.at;
+
+  # SSL
+  ssl_certificate /certs/self.crt;
+  ssl_certificate_key /certs/self.key;
+
+  # Recommendations from https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+  ssl_protocols TLSv1.1 TLSv1.2;
+  ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
+  ssl_prefer_server_ciphers on;
+  ssl_session_cache shared:SSL:10m;
+
+  # disable any limits to avoid HTTP 413 for large image uploads
+  client_max_body_size 0;
+
+  # required to avoid HTTP 411: see Issue #1486 (https://github.com/docker/docker/issues/1486)
+  chunked_transfer_encoding on;
+
+  location / {
+
+    proxy_pass                          http://guacamole/guacamole/;
+    proxy_redirect                      default;
+    proxy_set_header  Host              $http_host;   
+    proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+    proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Proto $scheme;
+    proxy_read_timeout                  900;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+    proxy_buffering off;
+#     access_log off;
+  }
+
+  location /admin/token {
+
+    # apply rate limiting
+    limit_req zone=one burst=100 nodelay;
+    limit_req_log_level error;
+
+    proxy_pass                          http://guacamole/guacamole/;
+    proxy_redirect                      default;
+    proxy_set_header  Host              $http_host;   
+    proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+    proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Proto $scheme;
+    proxy_read_timeout                  900;
+  }
+}
+
+
+
