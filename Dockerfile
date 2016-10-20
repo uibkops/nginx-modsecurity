@@ -66,7 +66,7 @@ RUN sudo DEBIAN_FRONTEND=noninteractive apt-get install debian-keyring
 # Then export the key to your local trustedkeys to make it trusted
 RUN sudo gpg --keyserver keyserver.ubuntu.com --recv-keys F569EF55 && gpg --no-default-keyring -a --export F569EF55 | gpg --no-default-keyring --keyring ~/.gnupg/trustedkeys.gpg --import -
 # Get Nginx (ppa:nginx/stable) source files
-RUN apt-get update &&  DEBIAN_FRONTEND=noninteractive apt-get source nginx
+RUN apt-get update &&  DEBIAN_FRONTEND=noninteractive apt-get source nginx package=1.11.5-0+xenial0
 
 # Install the build dependencies
 RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y --allow-downgrades --allow-remove-essential --allow-change-held-packages nginx
